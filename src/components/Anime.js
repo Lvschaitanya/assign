@@ -1,50 +1,52 @@
 import React, { useContext, useState } from 'react'
+import { Link, Navigate, Route, Routes } from 'react-router-dom'
 import { GlobalContext } from '../context/GlobalState'
 import './Anime.css'
+import DetailedAnime from './DetailedAnime'
 
-const Anime = ({value}) => {
-  const {wishList} = useContext(GlobalContext)
-  console.log(wishList)
-  const [buttonValue, setButtonValue]= useState('Add to List')
-  const [watchlistArray, setWatchlistArray] = useState([])
-  // watchlist.includes(value.title) ? setButtonValue('Remove from List') : setButtonValue('Add to List')
-  const data = localStorage.getItem('watchlist')
-  const watchlist = data ? JSON.parse(data) : []
-  // setWatchlistArray(watchlist)
-  // console.log(watchlistArray)
+const Anime = ({value,inWatchlist,watchlist,setWatchlist}) => {
+
+
 
   const click = () => {
-    if(buttonValue==='Add to List'){
-      console.log(value.title)
-      // const data = localStorage.getItem('watchlist')
-      // const watchlist = data ? JSON.parse(data) : []
-      if(!watchlist.includes(value.title)){
-        watchlist.push(value.title)
-        localStorage.setItem('watchlist',JSON.stringify(watchlist))
-      }
-      // console.log(localStorage.getItem('watchlist'))
-      setButtonValue('Remove from List')
+    if(!inWatchlist){
+
+      const _watchlist = [...watchlist]
+      _watchlist.push(value.title)
+      localStorage.setItem('watchlist',JSON.stringify(_watchlist))
+      setWatchlist(_watchlist)
+
     }else{
-      console.log(watchlist)
-      // watchlist.map(title=>console.log(title))
-      // watchlist.filter(title=>title!==value.title)
-      // watchlist.map(title=>console.log(title))
-      watchlist.splice(watchlist.indexOf(value.title),1)
-      console.log(watchlist)
-      // localStorage.setItem('watchlist',JSON.stringify(watchlist))
-      // console.log(localStorage.getItem('watchlist'))
-      setButtonValue('Add to List')
+
+
+      // watchlist.splice(watchlist.indexOf(value.title),1)
+      const filteredWatchList =watchlist.filter(animeTitle=>animeTitle!==value.title)
+      setWatchlist(filteredWatchList)
+      localStorage.setItem('watchlist', filteredWatchList)
+
     }
   }
-  // {watchlist.includes(value.title)? 'Remove from List' : 'Add to List' }
-  // {watchlist.includes(value.title)? 'added anime' : 'anime'
+
+  const detailedAnime = () => {
+    console.log(1)
+    
+  }
+
   return (
-    <div className='anime'>
-        <p>{value.title}</p>
-        <img className='image' src={value.images.jpg.image_url} alt='' />
-        <p>⭐ {value.score}</p>
-        <button onClick={click} id='add'>{buttonValue}</button>
-    </div>
+    // <Routes>
+    //   <Route path='/' element={
+        <div className={!inWatchlist ? 'anime' : 'added anime'}>
+            <p className='title'>{value.title}</p>
+            <a href={value.url} target="_blank"  rel="noreferrer">
+              <img className='image' src={value.images.jpg.image_url} alt='' />
+            </a>
+
+            <p className='rating'>⭐ {value.score}</p>
+            <button className='btn' onClick={click} id='add'>{inWatchlist?'Remove from List':'Add to List'}</button>
+        </div>
+      // } />
+    //   <Route path='/about' element={<DetailedAnime value={value} />} />
+    // </Routes>
   )
 }
 

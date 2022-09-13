@@ -2,16 +2,24 @@
 import { GlobalProvider } from './context/GlobalState';
 import './App.css';
 import Home from './components/Home';
+import { Router, Routes, Route } from 'react-router-dom';
+import DetailedAnime from './components/DetailedAnime';
+
 
 function App() {
   // const [text,setText] = useState('')
   return (
-    <GlobalProvider>
-      <div className="App">
-        {/* <input type='text' value={text} onChange={(e)=>setText(e.target.value)}/> */}
-        <Home />
-      </div>
-    </GlobalProvider>
+
+        <div className='App'>
+          <Home />
+        </div>
+
+      
+
+
+
+
+
   );
 }
 

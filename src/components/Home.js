@@ -121,7 +121,6 @@ const Home = () => {
         <div>
             <input type='text' value={text} onChange={(e)=>setText(e.target.value)}/>
             <label>
-                 Genre
                  <select id='selector' onChange={update}>
                     <option value=''>Select Genre</option>
                     {genres.map(genre=>(

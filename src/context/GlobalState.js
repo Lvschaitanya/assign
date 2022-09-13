@@ -17,18 +17,18 @@ export const GlobalProvider = ({children}) => {
         return watchlist
     }
 
-    useEffect(()=>{
-        const initial = () =>{
-            const list = getList()
+    // useEffect(()=>{
+    //     const initial = () =>{
+    //         const list = getList()
 
-            dispatch({
-                type:'init',
-                payload: list
-            })
-        }
+    //         dispatch({
+    //             type:'init',
+    //             payload: list
+    //         })
+    //     }
 
-        initial()
-    },[])
+    //     initial()
+    // },[])
 
     return (
         <GlobalContext.Provider value={{wishList: state.wishList}}>

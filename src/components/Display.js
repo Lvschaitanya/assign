@@ -1,11 +1,14 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { Route, Routes } from 'react-router-dom'
 import Anime from './Anime'
+import DetailedAnime from './DetailedAnime'
 import './Display.css'
 
 const Display = ({text,genre,animeList}) => {
-    console.log(text)
-    console.log(genre)
-    console.log(animeList)
+    const [watchlist,setWatchlist] = useState([])
+    // console.log(text)
+    // console.log(genre)
+    // console.log(animeList)
     const searchTerm = text.toLowerCase()
 //   return (
 //     <div className='display'>
@@ -28,29 +31,42 @@ const Display = ({text,genre,animeList}) => {
     // console.log(filter)
     // animeList.map(anime=>console.log(anime.title))
 
-    const genrecheck = (genres) =>{
+    useEffect(()=>{
+        const data = localStorage.getItem('watchlist')
+        // console.log(data)
+        const _watchlist = data ? data.split(',') : []
+        // console.log(_watchlist)
+        setWatchlist(_watchlist)
+    },[])
+
+    const genrecheck = (genres,k=0) =>{
         console.log(genre)
 
         genres.map(value=>{
             console.log(value.name)
             if(value.name===genre){
-                return true
+                return k=1
             }
             
         })
-        return false
+        return k
     }
 
-    const data = localStorage.getItem('watchlist')
-    const watchlist = data ? JSON.parse(data) : []
+
+    // console.log(watchlist.includes('Cowboy Bebop'))
 
     if(!text && !genre){
         return (
             <div className='display'>
                 {animeList.map(value =>(
-                    <Anime value={value} watchlist={watchlist} />
+                    // <Anime value={value} watchlist={watchlist} setWatchlist={setWatchlist} inWatchlist={watchlist.includes(value.title)} />
+                    <Routes>
+                        <Route path='/' element={<Anime value={value} watchlist={watchlist} setWatchlist={setWatchlist} inWatchlist={watchlist.includes(value.title)} />} />
+                        <Route path='/about' element={<DetailedAnime value={value} />} />
+                    </Routes>
                 ))}
             </div>
+
         )
     }else if(text && !genre){
         return (
@@ -58,7 +74,7 @@ const Display = ({text,genre,animeList}) => {
                 {
                     animeList.filter(value=>value.title.toLowerCase().includes(searchTerm))
                     .map(value=>(
-                        <Anime value={value} watchlist={watchlist} />
+                        <Anime value={value} watchlist={watchlist} setWatchlist={setWatchlist} inWatchlist={watchlist.includes(value.title)} />
                     ))
                 }
             </div>
@@ -68,11 +84,11 @@ const Display = ({text,genre,animeList}) => {
             <div className='display'>
                 {
                     animeList.filter(value=>{
-                        // return (genrecheck(value.genres) && value)
-                        return (genrecheck(value.genres) )
+                        return (genrecheck(value.genres) && value)
+                        // return (genrecheck(value.genres) )
 
                     }).map(value=>(
-                        <Anime value={value} watchlist={watchlist}/>
+                        <Anime value={value} watchlist={watchlist} setWatchlist={setWatchlist} inWatchlist={watchlist.includes(value.title)}/>
                     ))
                 }
             </div>
@@ -87,7 +103,7 @@ const Display = ({text,genre,animeList}) => {
                     })
                     .filter(value=>value.title.toLowerCase().includes(searchTerm))
                     .map(value=>(
-                        <Anime value={value} watchlist={watchlist} />
+                        <Anime value={value} watchlist={watchlist} setWatchlist={setWatchlist} inWatchlist={watchlist.includes(value.title)} />
                     ))
                 }
             </div>
