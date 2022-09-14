@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Anime from './Anime'
 import Display from './Display'
+import DisplayPaginate from './DisplayPaginate'
 import './Home.css'
 import Searchbar from './Searchbar'
 
@@ -10,11 +11,14 @@ const Home = () => {
     // const searchTerm = text.toLowerCase()
     // console.log(searchTerm)
     const genres =[]
+    const [toBeAdded, setToBeAdded] =useState([])
+    const [watchlist,setWatchlist] = useState([])
 
     const [animeList, setanimeList] = useState([])
-    const [value, setvalue] = useState('')
+    const [Reset, setReset] = useState(false)
     const [text,setText] = useState('')
     const [selectedGenre, setSelectedGenre] = useState('')
+    let [currentPage, setCurrentPage] = useState(1)
     let genreAnimeList = []
     // let selectedGenre = ''
 
@@ -39,19 +43,6 @@ const Home = () => {
         // console.log(animeList)
     },[])
 
-    // useEffect(()=>{
-    //     animeList.forEach(anime=>(
-    //         anime.genres.forEach(genre =>{
-    //             if(!genres.includes(genre.name)){
-    //                 genres.push(genre.name)
-    //             }
-    //         })
-    //     ))
-    // },[animeList])
-    // console.log(animeList)
-    // document.addEventListener('mousedown',()=>{
-    //     console.log(document.querySelector('input') === document.activeElement)
-    // })
     animeList.forEach(anime=>(
         anime.genres.forEach(genre =>{
             if(!genres.includes(genre.name)){
@@ -59,67 +50,71 @@ const Home = () => {
             }
         })
     ))
-    // console.log(genres)
-    // genres.forEach(genre=>genreAnimeList.push([genre]))
-    // console.log(genreAnimeList.indexOf('Sci-Fi'))
-    // genreAnimeList.indexOf('Action').push('a')
-    // console.log(genreAnimeList.includes('Action'))
-
-    
 
     const update = () =>{
         const select = document.getElementById('selector')
         const opt = select.options[select.selectedIndex]
         // console.log(opt.value)
         setSelectedGenre(opt.value)
+        if(opt.value===''){
+            setCurrentPage(1)
+        }
         // selectedGenre = opt.value
-        console.log(selectedGenre)
+        // console.log(selectedGenre)
     }
 
-//   if(text=== '' && selectedGenre === ''){
-//     return (
-//     <div>
-//         <label>
-//             Genre
-//             <select id='selector' onChange={update}>
-//                 <option value=''>Select Genre</option>
-//                 {genres.map(genre=>(
-//                     <option value={genre}>{genre}</option>
-//                 ))}
-//             </select>
-//         </label>
-//         <div className='home'>
-//             <p>{selectedGenre}</p>
-//             {animeList.map(value=>(
-//                 <Anime value={value}/>
-//             ))}
-//         </div>
-//     </div>
-//   )}else{
-//     return(
-//         <div>
-//             <label>
-//             Genre
-//             <select id='selector' onChange={update}>
-//                 <option value=''>Select Genre</option>
-//                 {genres.map(genre=>(
-//                     <option value={genre}>{genre}</option>
-//                 ))}
-//             </select>
-//         </label>
-//             <p>{selectedGenre}</p>
-//             {animeList.filter(value => value.title.toLowerCase().includes(searchTerm))
-//             .map(value =>(
-//                 <Anime value={value} />
-//             ))
-//             }
-//         </div>
-//     )
-//   }
+    const reset = () => {
+        const select = document.getElementById('selector')
+        select.selectedIndex=0
+        setSelectedGenre('')
+        // setReset(true)
+        setCurrentPage(1)
+        setText('')
+    }
+
+    const textChange = (e) => {
+        setText(e.target.value)
+        if(e.target.value===''){
+            console.log(1)
+            setCurrentPage(1)
+        }
+    }
+
+    useEffect(()=>{
+        if(toBeAdded.length>0){
+            document.getElementById('addToWatchlist').removeAttribute('disabled')
+            console.log(toBeAdded)
+        }else{
+            console.log(1)
+            document.getElementById('addToWatchlist').setAttribute('disabled','disabled')
+        }
+        // console.log(toBeAdded.length)
+    },[toBeAdded])
+
+    const addToWatchlist = () =>{
+
+
+        toBeAdded.map(anime=>{
+            if(!watchlist.includes(anime)){
+                const data = localStorage.getItem('watchlist')
+                const _watchlist = data ? JSON.parse(data) : []
+                // console.log(_watchlist)
+                _watchlist.push(anime)
+                console.log(_watchlist)
+                localStorage.setItem('watchlist',JSON.stringify(_watchlist))
+                setWatchlist(_watchlist)
+                document.getElementById(anime).checked=false
+            }else{
+                setToBeAdded(toBeAdded.filter(name=>name!==anime))
+                document.getElementById(anime).checked=false
+            }
+            document.getElementById('addToWatchlist').setAttribute('disabled','disabled')
+        })
+    }
 
     return(
         <div>
-            <input type='text' value={text} onChange={(e)=>setText(e.target.value)}/>
+            <input type='text' value={text} onChange={textChange}/>
             <label>
                  <select id='selector' onChange={update}>
                     <option value=''>Select Genre</option>
@@ -128,7 +123,10 @@ const Home = () => {
                     ))}
                 </select>
             </label>
-            <Display text={text} genre={selectedGenre} animeList={animeList}/>
+            <button onClick={reset}>Reset</button>
+            <button id='addToWatchlist' onClick={addToWatchlist} >Add to watchlist</button>
+            {/* <Display text={text} genre={selectedGenre} animeList={animeList}/> */}
+            <DisplayPaginate text={text} genre={selectedGenre} animeList={animeList} reset={Reset} currentPage={currentPage} setCurrentPage={setCurrentPage} toBeAdded={toBeAdded} setToBeAdded={setToBeAdded} watchlist={watchlist} setWatchlist={setWatchlist} />
         </div>
     )
 }

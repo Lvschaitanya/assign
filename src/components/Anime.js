@@ -40,9 +40,9 @@ const Anime = ({value,inWatchlist,watchlist,setWatchlist}) => {
             <a href={value.url} target="_blank"  rel="noreferrer">
               <img className='image' src={value.images.jpg.image_url} alt='' />
             </a>
-
             <p className='rating'>⭐ {value.score}</p>
             <button className='btn' onClick={click} id='add'>{inWatchlist?'Remove from List':'Add to List'}</button>
+            
         </div>
       // } />
     //   <Route path='/about' element={<DetailedAnime value={value} />} />

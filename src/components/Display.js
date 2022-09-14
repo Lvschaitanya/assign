@@ -6,44 +6,24 @@ import './Display.css'
 
 const Display = ({text,genre,animeList}) => {
     const [watchlist,setWatchlist] = useState([])
+    const [currentPage, setCurrentPage] = useState(1)
+    const [animePerPage] = useState(5)
     // console.log(text)
     // console.log(genre)
-    // console.log(animeList)
+    console.log(animeList)
     const searchTerm = text.toLowerCase()
-//   return (
-//     <div className='display'>
-//         {animeList.map(value =>(
-//             <Anime value={value} />
-//         ))}
-//     </div>
-//   )
-
-    // console.log(animeList)
-
-
-
-   
-
-    // const filter = animeList.filter(anime => {
-    //     return anime.genres.filter(name=>name===genre)
-    // })
-
-    // console.log(filter)
-    // animeList.map(anime=>console.log(anime.title))
 
     useEffect(()=>{
         const data = localStorage.getItem('watchlist')
-        // console.log(data)
-        const _watchlist = data ? data.split(',') : []
-        // console.log(_watchlist)
+        const _watchlist = data ? JSON.parse(data) : []
         setWatchlist(_watchlist)
+        // localStorage.removeItem('watchlist')
     },[])
-
+    console.log(watchlist)
     const genrecheck = (genres,k=0) =>{
         console.log(genre)
 
         genres.map(value=>{
-            console.log(value.name)
             if(value.name===genre){
                 return k=1
             }
@@ -52,18 +32,17 @@ const Display = ({text,genre,animeList}) => {
         return k
     }
 
+    const lastAnimeIndex = currentPage*animePerPage
+    const firstAnimeIndex = lastAnimeIndex -animePerPage
+    const currentAnimes = animeList.slice(firstAnimeIndex, lastAnimeIndex)
 
-    // console.log(watchlist.includes('Cowboy Bebop'))
+    // console.log(currentAnimes)
 
     if(!text && !genre){
         return (
             <div className='display'>
                 {animeList.map(value =>(
-                    // <Anime value={value} watchlist={watchlist} setWatchlist={setWatchlist} inWatchlist={watchlist.includes(value.title)} />
-                    <Routes>
-                        <Route path='/' element={<Anime value={value} watchlist={watchlist} setWatchlist={setWatchlist} inWatchlist={watchlist.includes(value.title)} />} />
-                        <Route path='/about' element={<DetailedAnime value={value} />} />
-                    </Routes>
+                    <Anime value={value} watchlist={watchlist} setWatchlist={setWatchlist} inWatchlist={watchlist.includes(value.title)} />
                 ))}
             </div>
 
